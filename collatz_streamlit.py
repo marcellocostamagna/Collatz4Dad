@@ -40,7 +40,7 @@ if 'sequence2' not in st.session_state:
 
 # User Inputs for Series 1
 st.sidebar.header("Settings for Series 1")
-number1 = st.sidebar.number_input("Starting Number (Series 1)", min_value=-1000, value=7, step=1, key="series1_number")
+number1_input = st.sidebar.text_input("Starting Number (Series 1)", "7", key="series1_number")
 max_steps1 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) (Series 1)", min_value=0, value=0, step=1, key="series1_steps")
 
 st.sidebar.subheader("Custom Operations for Series 1")
@@ -53,7 +53,7 @@ else:
 
 # User Inputs for Series 2
 st.sidebar.header("Settings for Series 2")
-number2 = st.sidebar.number_input("Starting Number (Series 2)", min_value=-1000, value=10, step=1, key="series2_number")
+number2_input = st.sidebar.text_input("Starting Number (Series 2)", "10", key="series2_number")
 max_steps2 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) (Series 2)", min_value=0, value=0, step=1, key="series2_steps")
 
 st.sidebar.subheader("Custom Operations for Series 2")
@@ -64,8 +64,25 @@ if use_custom2:
 else:
     op1_2, op2_2 = None, None
 
+# Validate and convert inputs
+try:
+    number1 = int(number1_input)
+    if number1 < 1:
+        st.sidebar.error("Starting number for Series 1 must be a positive integer.")
+except ValueError:
+    st.sidebar.error("Invalid input for Starting Number (Series 1). Please enter a valid integer.")
+    number1 = None
+
+try:
+    number2 = int(number2_input)
+    if number2 < 1:
+        st.sidebar.error("Starting number for Series 2 must be a positive integer.")
+except ValueError:
+    st.sidebar.error("Invalid input for Starting Number (Series 2). Please enter a valid integer.")
+    number2 = None
+
 # Button to Trigger Calculation for Series 1
-if st.button("Calculate Sequence for Series 1"):
+if st.button("Calculate Sequence for Series 1") and number1 is not None:
     # Generate the Sequence for Series 1
     if max_steps1 == 0:
         st.session_state['sequence1'] = generate_sequence(number1, custom_ops=(op1_1, op2_1) if use_custom1 else None)
@@ -73,7 +90,7 @@ if st.button("Calculate Sequence for Series 1"):
         st.session_state['sequence1'] = generate_sequence(number1, steps=max_steps1, custom_ops=(op1_1, op2_1) if use_custom1 else None)
 
 # Button to Trigger Calculation for Series 2
-if st.button("Calculate Sequence for Series 2"):
+if st.button("Calculate Sequence for Series 2") and number2 is not None:
     # Generate the Sequence for Series 2
     if max_steps2 == 0:
         st.session_state['sequence2'] = generate_sequence(number2, custom_ops=(op1_2, op2_2) if use_custom2 else None)
@@ -97,7 +114,7 @@ if st.session_state['sequence1']:
 
     with col2:
         st.subheader("Logarithmic Plot (Series 1)")
-        log_sequence1 = [np.log10(y) if y > 0 else 0 for y in sequence1]
+        log_sequence1 = [np.log10(float(y)) if y > 0 else 0 for y in sequence1]
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(log_sequence1))), y=log_sequence1, mode='lines+markers', name='Log of Sequence 1', line=dict(color='orange')))
         fig.update_layout(title="Logarithmic Collatz Sequence (Series 1)", xaxis_title="Steps", yaxis_title="Log10(Value)")
@@ -120,7 +137,7 @@ if st.session_state['sequence2']:
 
     with col4:
         st.subheader("Logarithmic Plot (Series 2)")
-        log_sequence2 = [np.log10(y) if y > 0 else 0 for y in sequence2]
+        log_sequence2 = [np.log10(float(y)) if y > 0 else 0 for y in sequence2]
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(log_sequence2))), y=log_sequence2, mode='lines+markers', name='Log of Sequence 2', line=dict(color='orange')))
         fig.update_layout(title="Logarithmic Collatz Sequence (Series 2)", xaxis_title="Steps", yaxis_title="Log10(Value)")
