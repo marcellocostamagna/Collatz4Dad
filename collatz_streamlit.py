@@ -57,7 +57,7 @@ st.sidebar.header("Settings for Series 1")
 number1_input = st.sidebar.text_input("Starting Number ", "7", key="series1_number")
 max_steps1 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) ", min_value=0, value=0, step=1, key="series1_steps")
 
-st.sidebar.subheader("Custom Operations")
+st.sidebar.subheader("Custom Operations for Series 1")
 use_custom1 = st.sidebar.checkbox("Use Custom Operations", value=False, key="series1_custom")
 if use_custom1:
     op1_1 = st.sidebar.text_input("Operation for even numbers", "n // 2", key="series1_op1")
@@ -68,9 +68,9 @@ else:
 # User Inputs for Series 2
 st.sidebar.header("Settings for Series 2")
 number2_input = st.sidebar.text_input("Starting Number ", "10", key="series2_number")
-max_steps2 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) ", min_value=0, value=0, step=1, key="series2_steps")
+max_steps2 = st.sidebar.number_input("Max Steps (0 for full sequence) ", min_value=0, value=0, step=1, key="series2_steps")
 
-st.sidebar.subheader("Custom Operations")
+st.sidebar.subheader("Custom Operations for Series 2")
 use_custom2 = st.sidebar.checkbox("Use Custom Operations", value=False, key="series2_custom")
 if use_custom2:
     op1_2 = st.sidebar.text_input("Operation for even numbers", "n // 2", key="series2_op1")
@@ -81,16 +81,12 @@ else:
 # Validate and convert inputs
 try:
     number1 = int(number1_input)
-    if number1 < 1:
-        st.sidebar.error("Starting number for Series 1 must be a positive integer.")
 except ValueError:
     st.sidebar.error("Invalid input for Starting Number (Series 1). Please enter a valid integer.")
     number1 = None
 
 try:
     number2 = int(number2_input)
-    if number2 < 1:
-        st.sidebar.error("Starting number for Series 2 must be a positive integer.")
 except ValueError:
     st.sidebar.error("Invalid input for Starting Number (Series 2). Please enter a valid integer.")
     number2 = None
@@ -109,33 +105,34 @@ if st.button("Calculate Sequence for Series 1") and number1 is not None:
 if st.session_state['sequence1']:
     sequence1 = st.session_state['sequence1']
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns([2, 2, 1])
 
     with col1:
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=list(range(len(sequence1))), y=sequence1, mode='lines+markers', name='Sequence 1'))
+        fig.add_trace(go.Scatter(x=list(range(len(sequence1))), y=sequence1, mode='lines+markers', name='Sequence'))
         fig.update_layout(title="Collatz Sequence", xaxis_title="Steps", yaxis_title="Value")
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        log_sequence1 = [np.log10(float(y)) if y > 0 else 0 for y in sequence1]
+        log_sequence1 = [np.log10(abs(float(y))) if y != 0 else 0 for y in sequence1]
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=list(range(len(log_sequence1))), y=log_sequence1, mode='lines+markers', name='Log of Sequence 1', line=dict(color='orange')))
-        fig.update_layout(title="Logarithmic Collatz Sequence", xaxis_title="Steps", yaxis_title="Log10(Value)")
-        st.plotly_chart(fig)
+        fig.add_trace(go.Scatter(x=list(range(len(log_sequence1))), y=log_sequence1, mode='lines+markers', name='Log of Sequence', line=dict(color='orange')))
+        fig.update_layout(title="Logarithm",  xaxis_title="Steps", yaxis_title="Log10(Value)")
+        st.plotly_chart(fig, use_container_width=True, key="log_plot_1")
 
-    if st.button("Sequence", key="show_seq_1"):
-        st.session_state['show_sequence1'] = not st.session_state['show_sequence1']
+    with col3:
+        if st.button("Show Sequence", key="show_seq_1"):
+            st.session_state['show_sequence1'] = not st.session_state['show_sequence1']
 
-    if st.session_state['show_sequence1']:
-        st.write(", ".join(map(str, sequence1)))
+        if st.session_state['show_sequence1']:
+            st.write(", ".join(map(str, sequence1)))
 
-    if st.button("Sequence Info", key="info_seq_1"):
-        st.session_state['info_sequence1'] = not st.session_state['info_sequence1']
+        if st.button("Sequence Info", key="info_seq_1"):
+            st.session_state['info_sequence1'] = not st.session_state['info_sequence1']
 
-    if st.session_state['info_sequence1']:
-        st.write(f"Length of the sequence: {len(sequence1)}")
-        st.write(f"Maximum value in the sequence: {max(sequence1)}")
+        if st.session_state['info_sequence1']:
+            st.write(f"Length of the sequence: {len(sequence1)}")
+            st.write(f"Maximum value in the sequence: {max(sequence1)}")
 
 # Button to Trigger Calculation for Series 2
 if st.button("Calculate Sequence for Series 2") and number2 is not None:
@@ -151,30 +148,32 @@ if st.button("Calculate Sequence for Series 2") and number2 is not None:
 if st.session_state['sequence2']:
     sequence2 = st.session_state['sequence2']
 
-    col3, col4 = st.columns(2)
-
-    with col3:
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=list(range(len(sequence2))), y=sequence2, mode='lines+markers', name='Sequence 2'))
-        fig.update_layout(title="Collatz Sequence", xaxis_title="Steps", yaxis_title="Value")
-        st.plotly_chart(fig)
+    col4, col5, col6 = st.columns([2, 2, 1])
 
     with col4:
-        log_sequence2 = [np.log10(float(y)) if y > 0 else 0 for y in sequence2]
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=list(range(len(log_sequence2))), y=log_sequence2, mode='lines+markers', name='Log of Sequence 2', line=dict(color='orange')))
-        fig.update_layout(title="Logarithmic Collatz Sequence", xaxis_title="Steps", yaxis_title="Log10(Value)")
-        st.plotly_chart(fig)
+        fig.add_trace(go.Scatter(x=list(range(len(sequence2))), y=sequence2, mode='lines+markers', name='Sequence'))
+        fig.update_layout(title="Collatz Sequence", xaxis_title="Steps", yaxis_title="Value")
+        st.plotly_chart(fig, use_container_width=True)
 
-    if st.button("Show Sequence", key="show_seq_2"):
-        st.session_state['show_sequence2'] = not st.session_state['show_sequence2']
+    with col5:
+        log_sequence2 = [np.log10(abs(float(y))) if y != 0 else 0 for y in sequence2]
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=list(range(len(log_sequence2))), y=log_sequence2, mode='lines+markers', name='Log of Sequence', line=dict(color='orange')))
+        fig.update_layout(title="Logarithm", xaxis_title="Steps", yaxis_title="Log10(Value)")
+        st.plotly_chart(fig, use_container_width=True, key="log_plot_2")
 
-    if st.session_state['show_sequence2']:
-        st.write(", ".join(map(str, sequence2)))
+    with col6:
+        if st.button("Show Sequence", key="show_seq_2"):
+            st.session_state['show_sequence2'] = not st.session_state['show_sequence2']
 
-    if st.button("Sequence Info", key="info_seq_2"):
-        st.session_state['info_sequence2'] = not st.session_state['info_sequence2']
-
-    if st.session_state['info_sequence2']:
-        st.write(f"Length of the sequence: {len(sequence2)}")
-        st.write(f"Maximum value in the sequence: {max(sequence2)}")
+        if st.session_state['show_sequence2']:
+            st.write(", ".join(map(str, sequence2)))
+            
+        if st.button("Sequence Info", key="info_seq_2"):
+            st.session_state['info_sequence2'] = not st.session_state['info_sequence2']
+            
+        if st.session_state['info_sequence2']:
+            st.write(f"Length of the sequence: {len(sequence2)}")
+            st.write(f"Maximum value in the sequence: {max(sequence2)}")
+            
