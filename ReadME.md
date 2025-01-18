@@ -38,5 +38,5 @@ streamlit run collatz_explorer.py
 
 You can use this application directly by visiting the following link:
 
-link(todo)
+[(https://collatz4dad-6nxwpncj75v4lpurxuryuz.streamlit.app/)](https://collatz4dad-6nxwpncj75v4lpurxuryuz.streamlit.app/)
 
