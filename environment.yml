@@ -3,7 +3,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - streamlit
-  - plotly
   - numpy
-
+  - pip
+  - pip:
+    - streamlit
+    - plotly
