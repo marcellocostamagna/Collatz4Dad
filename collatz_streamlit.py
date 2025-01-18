@@ -35,6 +35,7 @@ def generate_sequence(n, steps=None, custom_ops=None):
     return sequence
 
 ### MAIN ###
+st.set_page_config(layout="wide")
 st.title("Collatz Conjecture Explorer")
 
 # Initialize session state for sequences
@@ -53,27 +54,27 @@ if 'info_sequence2' not in st.session_state:
 
 # User Inputs for Series 1
 st.sidebar.header("Settings for Series 1")
-number1_input = st.sidebar.text_input("Starting Number (Series 1)", "7", key="series1_number")
-max_steps1 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) (Series 1)", min_value=0, value=0, step=1, key="series1_steps")
+number1_input = st.sidebar.text_input("Starting Number ", "7", key="series1_number")
+max_steps1 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) ", min_value=0, value=0, step=1, key="series1_steps")
 
-st.sidebar.subheader("Custom Operations for Series 1")
-use_custom1 = st.sidebar.checkbox("Use Custom Operations (Series 1)", value=False, key="series1_custom")
+st.sidebar.subheader("Custom Operations")
+use_custom1 = st.sidebar.checkbox("Use Custom Operations", value=False, key="series1_custom")
 if use_custom1:
-    op1_1 = st.sidebar.text_input("Operation for even numbers (use 'n') (Series 1)", "n // 2", key="series1_op1")
-    op2_1 = st.sidebar.text_input("Operation for odd numbers (use 'n') (Series 1)", "3 * n + 1", key="series1_op2")
+    op1_1 = st.sidebar.text_input("Operation for even numbers", "n // 2", key="series1_op1")
+    op2_1 = st.sidebar.text_input("Operation for odd numbers", "3 * n + 1", key="series1_op2")
 else:
     op1_1, op2_1 = None, None
 
 # User Inputs for Series 2
 st.sidebar.header("Settings for Series 2")
-number2_input = st.sidebar.text_input("Starting Number (Series 2)", "10", key="series2_number")
-max_steps2 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) (Series 2)", min_value=0, value=0, step=1, key="series2_steps")
+number2_input = st.sidebar.text_input("Starting Number ", "10", key="series2_number")
+max_steps2 = st.sidebar.number_input("Max Steps (0 for full sequence to 1) ", min_value=0, value=0, step=1, key="series2_steps")
 
-st.sidebar.subheader("Custom Operations for Series 2")
-use_custom2 = st.sidebar.checkbox("Use Custom Operations (Series 2)", value=False, key="series2_custom")
+st.sidebar.subheader("Custom Operations")
+use_custom2 = st.sidebar.checkbox("Use Custom Operations", value=False, key="series2_custom")
 if use_custom2:
-    op1_2 = st.sidebar.text_input("Operation for even numbers (use 'n') (Series 2)", "n // 2", key="series2_op1")
-    op2_2 = st.sidebar.text_input("Operation for odd numbers (use 'n') (Series 2)", "3 * n + 1", key="series2_op2")
+    op1_2 = st.sidebar.text_input("Operation for even numbers", "n // 2", key="series2_op1")
+    op2_2 = st.sidebar.text_input("Operation for odd numbers", "3 * n + 1", key="series2_op2")
 else:
     op1_2, op2_2 = None, None
 
@@ -111,32 +112,28 @@ if st.session_state['sequence1']:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Plot (Series 1)")
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(sequence1))), y=sequence1, mode='lines+markers', name='Sequence 1'))
-        fig.update_layout(title="Collatz Sequence (Series 1)", xaxis_title="Steps", yaxis_title="Value")
+        fig.update_layout(title="Collatz Sequence", xaxis_title="Steps", yaxis_title="Value")
         st.plotly_chart(fig)
 
     with col2:
-        st.subheader("Logarithmic Plot (Series 1)")
         log_sequence1 = [np.log10(float(y)) if y > 0 else 0 for y in sequence1]
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(log_sequence1))), y=log_sequence1, mode='lines+markers', name='Log of Sequence 1', line=dict(color='orange')))
-        fig.update_layout(title="Logarithmic Collatz Sequence (Series 1)", xaxis_title="Steps", yaxis_title="Log10(Value)")
+        fig.update_layout(title="Logarithmic Collatz Sequence", xaxis_title="Steps", yaxis_title="Log10(Value)")
         st.plotly_chart(fig)
 
-    if st.button("Show Sequence for Series 1"):
+    if st.button("Sequence", key="show_seq_1"):
         st.session_state['show_sequence1'] = not st.session_state['show_sequence1']
 
     if st.session_state['show_sequence1']:
-        st.subheader("Generated Sequence for Series 1")
         st.write(", ".join(map(str, sequence1)))
 
-    if st.button("Sequence Info for Series 1"):
+    if st.button("Sequence Info", key="info_seq_1"):
         st.session_state['info_sequence1'] = not st.session_state['info_sequence1']
 
     if st.session_state['info_sequence1']:
-        st.subheader("Sequence Info for Series 1")
         st.write(f"Length of the sequence: {len(sequence1)}")
         st.write(f"Maximum value in the sequence: {max(sequence1)}")
 
@@ -157,31 +154,27 @@ if st.session_state['sequence2']:
     col3, col4 = st.columns(2)
 
     with col3:
-        st.subheader("Plot (Series 2)")
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(sequence2))), y=sequence2, mode='lines+markers', name='Sequence 2'))
-        fig.update_layout(title="Collatz Sequence (Series 2)", xaxis_title="Steps", yaxis_title="Value")
+        fig.update_layout(title="Collatz Sequence", xaxis_title="Steps", yaxis_title="Value")
         st.plotly_chart(fig)
 
     with col4:
-        st.subheader("Logarithmic Plot (Series 2)")
         log_sequence2 = [np.log10(float(y)) if y > 0 else 0 for y in sequence2]
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=list(range(len(log_sequence2))), y=log_sequence2, mode='lines+markers', name='Log of Sequence 2', line=dict(color='orange')))
-        fig.update_layout(title="Logarithmic Collatz Sequence (Series 2)", xaxis_title="Steps", yaxis_title="Log10(Value)")
+        fig.update_layout(title="Logarithmic Collatz Sequence", xaxis_title="Steps", yaxis_title="Log10(Value)")
         st.plotly_chart(fig)
 
-    if st.button("Show Sequence for Series 2"):
+    if st.button("Show Sequence", key="show_seq_2"):
         st.session_state['show_sequence2'] = not st.session_state['show_sequence2']
 
     if st.session_state['show_sequence2']:
-        st.subheader("Generated Sequence for Series 2")
         st.write(", ".join(map(str, sequence2)))
 
-    if st.button("Sequence Info for Series 2"):
+    if st.button("Sequence Info", key="info_seq_2"):
         st.session_state['info_sequence2'] = not st.session_state['info_sequence2']
 
     if st.session_state['info_sequence2']:
-        st.subheader("Sequence Info for Series 2")
         st.write(f"Length of the sequence: {len(sequence2)}")
         st.write(f"Maximum value in the sequence: {max(sequence2)}")
